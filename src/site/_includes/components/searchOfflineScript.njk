@@ -1,6 +1,6 @@
 <script>
 
-  window.offlineSearch = true;
+  window.isOfflineSearchEnabled = true;
   console.log("Offline search is on.");
   function createIndex(posts) {
     return lunr(function () {
@@ -16,6 +16,7 @@
       });
     });
   }
+  window.createIndex = createIndex;
 
   function truncate(str, size) {
     //first, remove HTML
@@ -26,6 +27,7 @@
 
   function offlineSearch(search) {
     let data = window.docs;
+    let index = window.index;
     let results =
       search[0] == "#" && search.length > 1
         ? index.search(`${search.substring(1)}`)
@@ -43,5 +45,6 @@
 
     return results;
   }
+  window.offlineSearch = offlineSearch
 
 </script>
