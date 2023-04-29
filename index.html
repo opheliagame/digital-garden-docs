@@ -130,22 +130,71 @@
     </div>
 </div>
 <script>
+
+  window.offlineSearch = true;
+  console.log("Offline search is on.");
+  function createIndex(posts) {
+    return lunr(function () {
+      this.ref('id');
+      this.field('title');
+      this.field('content');
+      this.field('date');
+      this.field("tags");
+
+      posts.forEach((p, idx) => {
+        p.id = idx;
+        this.add(p);
+      });
+    });
+  }
+
+  function truncate(str, size) {
+    //first, remove HTML
+    str = str.replace(/<.*?>/g, '');
+    if (str.length < size) return str;
+    return str.substring(0, size - 3) + '...';
+  }
+
+  function offlineSearch(search) {
+    let data = window.docs;
+    let results =
+      search[0] == "#" && search.length > 1
+        ? index.search(`${search.substring(1)}`)
+        : index.search(search + "*");
+
+    results.forEach(r => {
+      r.title = data[r.ref].title;
+      r.content = truncate(data[r.ref].content, 400);
+      r.date = data[r.ref].date;
+      r.url = data[r.ref].url;
+      r.tags = data[r.ref].tags.filter(x => x != "gardenEntry" && x != "note");//Note is automatically added by 11ty. GardenEntry is used internally to mark the home page
+
+      delete r.ref;
+    });
+
+    return results;
+  }
+
+</script>
+
+
+<script>
     document.addEventListener('DOMContentLoaded', init, false);
     document.addEventListener('DOMContentLoaded', setCorrectShortcut, false);
 
-    window.toggleSearch=function(){
-        if(document.getElementById('globalsearch').classList.contains('active')){
+    window.toggleSearch = function () {
+        if (document.getElementById('globalsearch').classList.contains('active')) {
             document.getElementById('globalsearch').classList.remove('active');
-        }else{
+        } else {
             document.getElementById('globalsearch').classList.add('active');
             document.getElementById('term').focus();
         }
     }
 
-    window.toggleTagSearch=function(evt) {
+    window.toggleTagSearch = function (evt) {
         console.log(evt.textContent);
         const term = evt.textContent;
-        if(term){
+        if (term) {
             window.document.getElementById('term').value = term.trim();
             window.toggleSearch();
             window.search();
@@ -197,9 +246,9 @@
 
     function debounce(func, wait, immediate) {
         var timeout;
-        return function() {
+        return function () {
             var context = this, args = arguments;
-            var later = function() {
+            var later = function () {
                 timeout = null;
                 if (!immediate) func.apply(context, args);
             };
@@ -210,9 +259,9 @@
         };
     };
 
-    function setCorrectShortcut(){
-        if(navigator.platform.toUpperCase().indexOf('MAC')>=0){
-            document.querySelectorAll(".search-keys").forEach(x=>x.innerHTML = "⌘ + K");
+    function setCorrectShortcut() {
+        if (navigator.platform.toUpperCase().indexOf('MAC') >= 0) {
+            document.querySelectorAll(".search-keys").forEach(x => x.innerHTML = "⌘ + K");
         }
     }
 
@@ -243,10 +292,10 @@
                     } else {
                         document.querySelector('.searchresult').classList.add('active');
                     }
-                    
+
                     let currentActive = document.querySelector('.searchresult.active');
                     if (currentActive) {
-                        currentActive .scrollIntoView({
+                        currentActive.scrollIntoView({
                             behavior: 'smooth',
                             block: 'nearest',
                             inline: 'start',
@@ -277,7 +326,7 @@
 
                     let currentActive = document.querySelector('.searchresult.active');
                     if (currentActive) {
-                        currentActive .scrollIntoView({
+                        currentActive.scrollIntoView({
                             behavior: 'smooth',
                             block: 'nearest',
                             inline: 'start',
@@ -316,15 +365,23 @@
         let search = field
             .value
             .trim();
-        if (!search) 
+        if (!search)
             return;
-        if(search == lastSearch) return;
+        if (search == lastSearch) return;
         console.log(`search for ${search}`);
         window.lastSearch = search;
 
         resultsDiv.innerHTML = loadingSvg;
-        let searchRequest = await fetch(`/api/search?term=${encodeURIComponent(search)}`);
-        let results = await searchRequest.json();
+
+        let results;
+        if (window.offlineSearch == true) {
+            results = offlineSearch(search)
+        }
+        else {
+            let searchRequest = await fetch(`/api/search?term=${encodeURIComponent(search)}`);
+            results = await searchRequest.json();
+
+        }
         let resultsHTML = '';
         if (!results.length) {
             let resultParagraph = document.createElement("p");
@@ -336,13 +393,13 @@
         resultsHTML += '<div style="max-width:100%;">';
         // we need to add title, url from ref
         results.forEach(r => {
-            if(r.tags && r.tags.length > 0){
+            if (r.tags && r.tags.length > 0) {
                 resultsHTML += `<div class="searchresult">
                     <a class="search-link" href="${r.url}">${r.title}</a>
                     <div onclick="window.location='${r.url}'">
                         <div class="header-meta">
                             <div class="header-tags">
-                                ${r.tags.map(tag=>'<a class="tag" href="JavaScript:Void(0);">#'+tag+'</a>').join("")}
+                                ${r.tags.map(tag => '<a class="tag" href="JavaScript:Void(0);">#' + tag + '</a>').join("")}
                             </div>
                         </div>
                         ${r.content}
@@ -361,7 +418,6 @@
         resultsDiv.innerHTML = resultsHTML;
     }
 </script>
-
     
     <main class="content cm-s-obsidian ">
       <header>
