@@ -1,7 +1,7 @@
 [
 {
 		"title": "Untitled 1",
-		"date":"Sat Apr 29 2023 15:45:12 GMT+0000 (Coordinated Universal Time)",
+		"date":"Sat Apr 29 2023 15:54:09 GMT+0000 (Coordinated Universal Time)",
 		"url":"/untitled-1/",
 		"content": "Saying you’re a sub is not a free pass to have no sense of preference or direction.\npicked from kernelmag",
 		"tags": ["note"]
@@ -9,7 +9,7 @@
 
 {
 		"title": "setup",
-		"date":"Sat Apr 29 2023 15:45:12 GMT+0000 (Coordinated Universal Time)",
+		"date":"Sat Apr 29 2023 15:54:09 GMT+0000 (Coordinated Universal Time)",
 		"url":"/",
 		"content": "use template to make repository\nmake new personal access token with repo read write permissions\nenable workflows in action settings of repository",
 		"tags": ["note","gardenEntry"]

@@ -131,7 +131,7 @@
 </div>
 <script>
 
-  window.offlineSearch = true;
+  window.isOfflineSearchEnabled = true;
   console.log("Offline search is on.");
   function createIndex(posts) {
     return lunr(function () {
@@ -147,6 +147,7 @@
       });
     });
   }
+  window.createIndex = createIndex;
 
   function truncate(str, size) {
     //first, remove HTML
@@ -157,6 +158,7 @@
 
   function offlineSearch(search) {
     let data = window.docs;
+    let index = window.index;
     let results =
       search[0] == "#" && search.length > 1
         ? index.search(`${search.substring(1)}`)
@@ -174,6 +176,7 @@
 
     return results;
   }
+  window.offlineSearch = offlineSearch
 
 </script>
 
@@ -266,6 +269,14 @@
     }
 
     async function init() {
+
+        // init offline search index 
+        if(window.isOfflineSearchEnabled == true) {
+            let docs = await (await fetch('/index.json')).json();  
+            let index = window.createIndex(docs);
+            window.docs = docs;
+            window.index = index;
+        }
 
         //open searchmodal when ctrl + k is pressed, cmd + k on mac
         document.addEventListener('keydown', (e) => {
@@ -374,8 +385,8 @@
         resultsDiv.innerHTML = loadingSvg;
 
         let results;
-        if (window.offlineSearch == true) {
-            results = offlineSearch(search)
+        if (window.isOfflineSearchEnabled == true) {
+            results = window.offlineSearch(search)
         }
         else {
             let searchRequest = await fetch(`/api/search?term=${encodeURIComponent(search)}`);
