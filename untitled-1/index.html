@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>setup</title>
+    <title>Untitled 1</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/mermaid@9.4.0/dist/mermaid.min.js"></script>
 <script>
@@ -80,6 +80,7 @@
   <body class="theme-dark markdown-preview-view markdown-rendered markdown-preview-section ">
     
     
+    
       
     <nav class="navbar">
         <div class="navbar-inner">
@@ -103,6 +104,7 @@
     </nav>
     
     
+
     
       <div class="search-container" id="globalsearch" onclick="toggleSearch()">
     <div class="search-box">
@@ -360,24 +362,19 @@
 </script>
 
     
+
     <main class="content cm-s-obsidian ">
       <header>
-      
-
-      <div class="header-meta">
         
-      </div>
+        <div class="header-meta">
+          </div>
       
       
       </header>
       
       
-      <ul>
-<li>use template to make repository</li>
-<li>make new personal access token with repo read write permissions</li>
-<li>enable workflows in action settings of repository</li>
-<li></li>
-</ul>
+      <p>Saying you’re a sub is not a free pass to have no sense of preference or direction.</p>
+<p>picked from <a href="https://www.kernelmag.io/2/all-the-better-to-see-you" target="_blank" class="external-link">kernelmag</a></p>
 
       
       
@@ -386,6 +383,39 @@
     
 
     
+        <script>
+      if (window.location.hash) {
+        document.getElementById(window.location.hash.slice(1)).classList.add('referred');
+      }
+      window.addEventListener('hashchange', (evt) => {
+        const oldParts = evt.oldURL.split("#");
+        if (oldParts[1]) {
+          document.getElementById(oldParts[1]).classList.remove('referred');
+        }
+        const newParts = evt.newURL.split("#");
+        if (newParts[1]) {
+          document.getElementById(newParts[1]).classList.add('referred');
+        }
+      }, false);
+      const url_parts = window.location.href.split("#")
+      const url = url_parts[0];
+      const referrence = url_parts[1];
+      document.querySelectorAll(".cm-s-obsidian > *[id]").forEach(function (el) {
+        el.ondblclick = function(evt) {
+          const ref_url = url + '#' + evt.target.id
+          navigator.clipboard.writeText(ref_url);
+      }
+      });
+
+      
+    </script>
+    <script src=" https://cdn.jsdelivr.net/npm/luxon@3.2.1/build/global/luxon.min.js "></script>
+<script defer>
+    TIMESTAMP_FORMAT = "MMM dd, yyyy h:mm a";
+    document.querySelectorAll('.human-date').forEach(function (el) {
+        el.innerHTML = luxon.DateTime.fromISO(el.getAttribute('data-date') || el.innerText).toFormat(TIMESTAMP_FORMAT);
+      });
+</script>
     
     
     <script>
@@ -395,5 +425,5 @@ lucide.createIcons({
             }
         });
 </script>
-    </body>
-  </html>
+  </body>
+</html>
